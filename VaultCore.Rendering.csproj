@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Deterministic>true</Deterministic>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>VaultCore.Rendering</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <PackageId>VaultCore.Rendering</PackageId>
+        <Authors>Chris Butler</Authors>
+        <PackageDescription>Provider interfaces and classes to allow cores to perform rendering</PackageDescription>
+        <RepositoryUrl>https://github.com/VaultEmu/VaultCore.Rendering</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <DebugSymbols>true</DebugSymbols>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MinVer" Version="4.2.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="VaultCore.CoreAPI" Version="0.1.3" />
+    </ItemGroup>
+
+</Project>
