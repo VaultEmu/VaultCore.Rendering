@@ -15,12 +15,14 @@ public class PixelData
     
     public uint Height => _height;
     
+    public uint NumPixels => _width * _height;
+    
     public PixelData(uint width, uint height)
     {
         Resize(width, height);
     }
     
-    //Sets a pixel in the backbuffer
+    //Sets a pixel at an x and y position
     public void SetPixel(Color32 pixel, uint x, uint y)
     {
         if(x >= _width)
@@ -37,8 +39,19 @@ public class PixelData
 
         _pixelDataArray[index] = pixel;
     }
+    
+    //Sets the color of a pixel at a pixel index
+    public void SetPixel(Color32 pixel, uint index)
+    {
+        if(index >= NumPixels)
+        {
+            throw new ArgumentException("index should be less then NumPixels");
+        }
 
-    //Gets a pixel set in the backbuffer
+        _pixelDataArray[index] = pixel;
+    }
+
+    //Gets a pixel at an x and y position
     public Color32 GetPixel(uint x, uint y)
     {
         if(x >= _width)
@@ -56,6 +69,17 @@ public class PixelData
         return _pixelDataArray[index];
     }
     
+    //Gets a pixel at a pixel index
+    public Color32 GetPixel(uint index)
+    {
+        if(index >= NumPixels)
+        {
+            throw new ArgumentException("index should be less then NumPixels");
+        }
+
+        return _pixelDataArray[index];
+    }
+    
     //Resized this PixelData. This will discard all existing data
     public void Resize(uint width, uint height)
     {
@@ -68,23 +92,52 @@ public class PixelData
     // SourceRect defines the area inside the PixelData to copy from, and it will be copied to this
     // PixelData starting at targetX, targetY
     // sourceRect x and y defines bottom left corner of source region
-    public void CopyPixelDataIntoPixelData(
+    public void CopyFromPixelData(
         PixelData sourcePixelData,
         Rect sourceRect,
         uint targetX, uint targetY)
     {
-        CopyColorDataIntoPixelData(
+        CopyFromColor32Array(
             sourcePixelData._pixelDataArray, 
             sourcePixelData._width, sourcePixelData._height,
             sourceRect, 
             targetX, targetY);
     }
     
+    // Copies data from an PixelData to this PixelData.
+    // Copies the whole of the source pixel data and it will be copied to this
+    // PixelData starting at targetX, targetY
+    public void CopyFromPixelData(
+        PixelData sourcePixelData,
+        uint targetX, uint targetY)
+    {
+        CopyFromPixelData(
+            sourcePixelData,
+            new Rect(0,0,sourcePixelData._width, sourcePixelData._height), 
+            targetX, targetY);
+    }
+    
+    // Copies data from an array of Color32 representing pixel data.
+    // This version can be used replace all the pixel data quickly and requires sourceColorData Length to be the exactly Width * Height
+    public void CopyFromColor32Array(Color32[] sourceColorData)
+    {
+        if(sourceColorData.Length != NumPixels)
+        {
+            throw new ArgumentException($"This Overload requires sourceColorData to be exactly of Length Width * Height");
+        }
+        
+        CopyFromColor32Array(
+            sourceColorData, 
+            _width, _height,
+            new Rect(0,0,_width,_height), 
+            0, 0);
+    }
+    
     // Copies data from an array of Color32 representing pixel data of sourceColorDataWidth and sourceColorDataHeight to this PixelData.
     // SourceRect defines the area inside the color32 array data to copy from, and it will be copied to this
     // PixelData starting at targetX, targetY
     // sourceRect x and y defines bottom left corner of source region
-    public void CopyColorDataIntoPixelData(
+    public void CopyFromColor32Array(
         Color32[] sourceColorData,
         uint sourceColorDataWidth, uint sourceColorDataHeight,
         Rect sourceRect,
