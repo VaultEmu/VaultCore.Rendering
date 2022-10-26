@@ -43,7 +43,8 @@ public abstract class Texture2D : IDisposable
         T[] pixelData,
         uint x, uint y,
         uint width, uint height,
-        uint mipLevel = 0);
+        uint mipLevel = 0)
+        where T : struct;
     
     protected abstract void Dispose(bool disposing);
 
