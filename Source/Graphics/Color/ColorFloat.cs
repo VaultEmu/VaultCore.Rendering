@@ -4,7 +4,7 @@ namespace VaultCore.Rendering;
 
 //Representation of RGBA colors in float format
 [StructLayout(LayoutKind.Explicit)]
-public struct Color
+public struct ColorFloat
 {
     [FieldOffset(0)]
     public float R;
@@ -18,7 +18,7 @@ public struct Color
     [FieldOffset(12)]
     public float A;
     
-    public Color(float r, float g, float b)
+    public ColorFloat(float r, float g, float b)
     {
         R = r;
         G = g;
@@ -26,7 +26,7 @@ public struct Color
         A = 1.0f;
     }
     
-    public Color(float r, float g, float b, float a)
+    public ColorFloat(float r, float g, float b, float a)
     {
         R = r;
         G = g;
