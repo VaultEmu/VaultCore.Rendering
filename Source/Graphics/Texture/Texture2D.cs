@@ -41,8 +41,8 @@ public abstract class Texture2D : IDisposable
     //Make sure to call StartWritingPixelsToTexture first
     public abstract void WritePixelData<T>(
         T[] pixelData,
-        uint x, uint y,
-        uint width, uint height,
+        uint pixelDataWidth, uint pixelDataHeight,
+        uint targetX, uint targetY,
         uint mipLevel = 0)
         where T : struct;
     
