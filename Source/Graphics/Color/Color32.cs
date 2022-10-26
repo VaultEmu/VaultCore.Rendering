@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 namespace VaultCore.Rendering;
 
 //Representation of RGBA colors in 32 bit format.
-//directly with the 
 [StructLayout(LayoutKind.Explicit)]
 public struct Color32
 {
