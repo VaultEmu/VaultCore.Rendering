@@ -17,6 +17,8 @@ public class PixelData
     
     public uint NumPixels => _width * _height;
     
+    public Color32[] Data => _pixelDataArray;
+    
     public PixelData(uint width, uint height)
     {
         Resize(width, height);
