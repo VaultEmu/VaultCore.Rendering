@@ -14,8 +14,8 @@ public interface ITextureManager : IFeature
     //Use setupForFastCpuWrite if you plan to update the texture often from the CPU
     public Texture2D LoadTextureFromDisk(string path, bool srgb = true, bool mipmaps = true, bool setupForFastCpuWrite = false);
     
-    //Loads a texture from disk as an array of Color
-    public Color[] LoadTextureFromDiskAsColorArray(string path, out uint width, out uint height);
+    //Loads a texture from disk as an array of ColorFloat
+    public ColorFloat[] LoadTextureFromDiskAsColorFloatArray(string path, out uint width, out uint height);
     
     //Loads a texture from disk as an array of Color32
     public Color32[] LoadTextureFromDiskAsColor32Array(string path, out uint width, out uint height);

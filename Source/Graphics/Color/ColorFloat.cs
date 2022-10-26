@@ -1,11 +1,21 @@
+using System.Runtime.InteropServices;
+
 namespace VaultCore.Rendering;
 
-//Representation of RGBA colors in float fomat
+//Representation of RGBA colors in float format
+[StructLayout(LayoutKind.Explicit)]
 public struct Color
 {
+    [FieldOffset(0)]
     public float R;
+    
+    [FieldOffset(4)]
     public float G;
+    
+    [FieldOffset(8)]
     public float B;
+    
+    [FieldOffset(12)]
     public float A;
     
     public Color(float r, float g, float b)
@@ -13,7 +23,7 @@ public struct Color
         R = r;
         G = g;
         B = b;
-        A = 255;
+        A = 1.0f;
     }
     
     public Color(float r, float g, float b, float a)
