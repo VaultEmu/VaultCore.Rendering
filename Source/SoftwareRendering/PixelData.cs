@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace VaultCore.Rendering;
 
 //Class wrapping around an array of color32 that represents the pixel data of some width and height
-//Data is defined as pixel 0,0 been in the bottom left corner with X going right and y going up
+//Data is defined as pixel 0,0 been in the top left corner with X going right and y going down
 public class PixelData
 {
     private Color32[] _pixelDataArray = null!;
@@ -82,6 +82,33 @@ public class PixelData
         return _pixelDataArray[index];
     }
     
+    //Clear all data to a single color
+    public void Clear(Color32 clearColor)
+    {
+        unsafe
+        {
+            _pixelDataArray[0]= clearColor;
+            
+            uint index = 1;
+            uint block = 1;
+            var arraySpan = new Span<Color32>(_pixelDataArray);
+            
+            fixed (Color32* sourcePtr = &MemoryMarshal.GetReference(arraySpan))
+            {
+                var itemSize = sizeof(Color32);
+                
+                while (index < arraySpan.Length) 
+                {
+                    var targetPtr = sourcePtr + index;
+
+                    Unsafe.CopyBlock(targetPtr, sourcePtr, (uint)Math.Min(block * itemSize, (arraySpan.Length - index) * itemSize));
+                    index += block;
+                    block *= 2;
+                }
+            }
+        }
+    }
+    
     //Resized this PixelData. This will discard all existing data
     public void Resize(uint width, uint height)
     {
@@ -93,7 +120,7 @@ public class PixelData
     // Copies data from an PixelData to this PixelData.
     // SourceRect defines the area inside the PixelData to copy from, and it will be copied to this
     // PixelData starting at targetX, targetY
-    // sourceRect x and y defines bottom left corner of source region
+    // sourceRect x and y defines top left corner of source region
     public void CopyFromPixelData(
         PixelData sourcePixelData,
         Rect sourceRect,
@@ -138,7 +165,7 @@ public class PixelData
     // Copies data from an array of Color32 representing pixel data of sourceColorDataWidth and sourceColorDataHeight to this PixelData.
     // SourceRect defines the area inside the color32 array data to copy from, and it will be copied to this
     // PixelData starting at targetX, targetY
-    // sourceRect x and y defines bottom left corner of source region
+    // sourceRect x and y defines top left corner of source region
     public void CopyFromColor32Array(
         Color32[] sourceColorData,
         uint sourceColorDataWidth, uint sourceColorDataHeight,
