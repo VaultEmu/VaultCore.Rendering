@@ -2,9 +2,17 @@
 
 namespace VaultCore.Rendering;
 
-//Allows your core to perform software rendering.
-public interface ISoftwareRendering : IFeature
+/// <summary>
+/// Feature for allowing your core to perform software rendering.
+/// </summary>
+public interface ISoftwareRendering : IVaultCoreFeature<ISoftwareRendering.FeatureApi>
 {
-    //Called by the core to let the frontend know that there is pixeldata to display
-    void OnFrameReadyToDisplay(PixelData pixelData);
+    public interface FeatureApi : IVaultCoreFeatureApi
+    {
+        /// <summary>
+        /// Called by the core to let the frontend know that there is pixeldata to display
+        /// </summary>
+        /// <param name="pixelData">The pixel data to display</param>
+        void OnFrameReadyToDisplay(PixelData pixelData);
+    }
 }
