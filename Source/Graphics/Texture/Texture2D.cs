@@ -44,7 +44,7 @@ public abstract class Texture2D : IDisposable
         uint pixelDataWidth, uint pixelDataHeight,
         uint targetX, uint targetY,
         uint mipLevel = 0)
-        where T : struct;
+        where T : unmanaged;
     
     protected abstract void Dispose(bool disposing);
 
