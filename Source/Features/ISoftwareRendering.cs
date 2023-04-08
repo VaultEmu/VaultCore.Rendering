@@ -8,8 +8,22 @@ namespace VaultCore.Rendering;
 public interface ISoftwareRendering : IVaultCoreFeature
 {
     /// <summary>
+    /// Called by the core to initialise an output for the software rendered data on the frontend
+    /// </summary>
+    /// <returns>Handle for the new output</returns>
+    /// /// <param name="outputName">Name of this output</param>
+    SoftwareRenderingOutputHandle CreateOutput(string outputName);
+    
+    /// <summary>
+    /// Called by the core to destroy an output for the software rendered data on the frontend
+    /// </summary>
+    /// <param name="handle">handle of output to destroy</param>
+    void DestroyOutput(SoftwareRenderingOutputHandle handle);
+    
+    /// <summary>
     /// Called by the core to let the frontend know that there is pixeldata to display
     /// </summary>
+    ///  /// <param name="target">handle of the target output to send the data to</param>
     /// <param name="pixelData">The pixel data to display</param>
-    void OnFrameReadyToDisplay(PixelData pixelData);
+    void OnFrameReadyToDisplay(SoftwareRenderingOutputHandle target, PixelData pixelData);
 }

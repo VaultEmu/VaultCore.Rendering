@@ -3,28 +3,51 @@ using System.Runtime.InteropServices;
 
 namespace VaultCore.Rendering;
 
-//Class wrapping around an array of color32 that represents the pixel data of some width and height
-//Data is defined as pixel 0,0 been in the top left corner with X going right and y going down
+/// <summary>
+/// Class wrapping around an array of color32 that represents the pixel data of some width and height
+/// Data is defined as pixel 0,0 been in the top left corner with X going right and y going down
+/// </summary>
 public class PixelData
 {
     private Color32[] _pixelDataArray = null!;
     private uint _width;
     private uint _height;
     
+    /// <summary>
+    /// Width of the Pixel Data
+    /// </summary>
     public uint Width => _width;
     
+    /// <summary>
+    /// Height of the Pixel Data
+    /// </summary>
     public uint Height => _height;
     
+    /// <summary>
+    /// Total Number of pixels in the pixel data
+    /// </summary>
     public uint NumPixels => _width * _height;
     
+    /// <summary>
+    /// The raw Color32 data this PixelData wraps
+    /// </summary>
     public Color32[] Data => _pixelDataArray;
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PixelData"/> class.
+    /// </summary>
+    /// <param name="width">Width of this PixelData</param>
+    /// <param name="height">Height of this PixelData</param>
     public PixelData(uint width, uint height)
     {
         Resize(width, height);
     }
-    
-    //Sets a pixel at an x and y position
+    /// <summary>
+    /// Sets a pixel at an x and y position
+    /// </summary>
+    /// <param name="pixel">Color to set the pixel</param>
+    /// <param name="x">X position of the pixel</param>
+    /// <param name="y">Y position of the pixel</param>
     public void SetPixel(Color32 pixel, uint x, uint y)
     {
         if(x >= _width)
@@ -42,7 +65,11 @@ public class PixelData
         _pixelDataArray[index] = pixel;
     }
     
-    //Sets the color of a pixel at a pixel index
+    /// <summary>
+    /// Sets a pixel at an pixel index
+    /// </summary>
+    /// <param name="pixel">Color to set the pixel</param>
+    /// <param name="index">Index of the pixel</param>
     public void SetPixel(Color32 pixel, uint index)
     {
         if(index >= NumPixels)
@@ -53,7 +80,11 @@ public class PixelData
         _pixelDataArray[index] = pixel;
     }
 
-    //Gets a pixel at an x and y position
+    /// <summary>
+    /// Gets a pixel at an x and y position
+    /// </summary>
+    /// <param name="x">X position of the pixel</param>
+    /// <param name="y">Y position of the pixel</param>
     public Color32 GetPixel(uint x, uint y)
     {
         if(x >= _width)
@@ -71,7 +102,10 @@ public class PixelData
         return _pixelDataArray[index];
     }
     
-    //Gets a pixel at a pixel index
+    /// <summary>
+    /// Gets a pixel at a pixel index
+    /// </summary>
+    /// <param name="index">Index of the pixel</param>
     public Color32 GetPixel(uint index)
     {
         if(index >= NumPixels)
@@ -82,7 +116,10 @@ public class PixelData
         return _pixelDataArray[index];
     }
     
-    //Clear all data to a single color
+    /// <summary>
+    /// Clear all data to a single color
+    /// </summary>
+    /// <param name="clearColor">Color to clear the data to</param>
     public void Clear(Color32 clearColor)
     {
         unsafe
@@ -109,7 +146,11 @@ public class PixelData
         }
     }
     
-    //Resized this PixelData. This will discard all existing data
+    /// <summary>
+    /// Resized this PixelData. This will discard all existing data
+    /// </summary>
+    /// <param name="width">New width of the PixelData</param>
+    /// <param name="height">New height of the PixelData</param>
     public void Resize(uint width, uint height)
     {
         _width = width;
@@ -117,10 +158,16 @@ public class PixelData
         _pixelDataArray = new Color32[width * height];
     }
     
-    // Copies data from an PixelData to this PixelData.
-    // SourceRect defines the area inside the PixelData to copy from, and it will be copied to this
-    // PixelData starting at targetX, targetY
-    // sourceRect x and y defines top left corner of source region
+    /// <summary>
+    /// Copies data from an PixelData to this PixelData.
+    /// SourceRect defines the area inside the PixelData to copy from, and it will be copied to this
+    /// PixelData starting at targetX, targetY
+    /// sourceRect x and y defines top left corner of source region
+    /// </summary>
+    /// <param name="sourcePixelData">Source data to copy from</param>
+    /// <param name="sourceRect">Area in source data to copy from</param>
+    /// <param name="targetX">Target X Position to copy data to in this PixelData</param>
+    /// <param name="targetY">Target Y Position to copy data to in this PixelData</param>
     public void CopyFromPixelData(
         PixelData sourcePixelData,
         Rect sourceRect,
@@ -133,9 +180,14 @@ public class PixelData
             targetX, targetY);
     }
     
-    // Copies data from an PixelData to this PixelData.
-    // Copies the whole of the source pixel data and it will be copied to this
-    // PixelData starting at targetX, targetY
+    /// <summary>
+    /// Copies data from an PixelData to this PixelData.
+    /// Copies the whole of the source pixel data and it will be copied to this
+    /// PixelData starting at targetX, targetY
+    /// </summary>
+    /// <param name="sourcePixelData">Source data to copy from</param>
+    /// <param name="targetX">Target X Position to copy data to in this PixelData</param>
+    /// <param name="targetY">Target Y Position to copy data to in this PixelData</param>
     public void CopyFromPixelData(
         PixelData sourcePixelData,
         uint targetX, uint targetY)
@@ -146,8 +198,12 @@ public class PixelData
             targetX, targetY);
     }
     
-    // Copies data from an array of Color32 representing pixel data.
-    // This version can be used replace all the pixel data quickly and requires sourceColorData Length to be the exactly Width * Height
+    /// <summary>
+    /// Copies data from an array of Color32 representing pixel data.
+    /// This version can be used replace all the pixel data quickly and requires sourceColorData
+    /// Length to be the exactly Width * Height
+    /// </summary>
+    /// <param name="sourceColorData">Source data to copy from</param>
     public void CopyFromColor32Array(Color32[] sourceColorData)
     {
         if(sourceColorData.Length != NumPixels)
@@ -162,10 +218,19 @@ public class PixelData
             0, 0);
     }
     
-    // Copies data from an array of Color32 representing pixel data of sourceColorDataWidth and sourceColorDataHeight to this PixelData.
-    // SourceRect defines the area inside the color32 array data to copy from, and it will be copied to this
-    // PixelData starting at targetX, targetY
-    // sourceRect x and y defines top left corner of source region
+    /// <summary>
+    /// Copies data from an array of Color32 representing pixel data of sourceColorDataWidth and
+    /// sourceColorDataHeight to this PixelData.
+    /// SourceRect defines the area inside the color32 array data to copy from, and it will be copied to
+    /// this PixelData starting at targetX, targetY
+    /// sourceRect x and y defines top left corner of source region
+    /// </summary>
+    /// <param name="sourceColorData">Source data to copy from</param>
+    /// <param name="sourceColorDataWidth">Width of the source data</param>
+    /// <param name="sourceColorDataHeight">Height of the source data</param>
+    /// <param name="sourceRect">area inside the color32 array to copy from</param>
+    /// <param name="targetX">Target X Position to copy data to in this PixelData</param>
+    /// <param name="targetY">Target Y Position to copy data to in this PixelData</param>
     public void CopyFromColor32Array(
         Color32[] sourceColorData,
         uint sourceColorDataWidth, uint sourceColorDataHeight,
