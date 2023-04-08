@@ -21,9 +21,17 @@ public interface ISoftwareRendering : IVaultCoreFeature
     void DestroyOutput(SoftwareRenderingOutputHandle handle);
     
     /// <summary>
-    /// Called by the core to let the frontend know that there is pixeldata to display
+    /// Resets an output to its intial state before any data was sent to it
+    /// </summary>
+    /// <param name="handle">handle of output to destroy</param>
+    void ResetOutput(SoftwareRenderingOutputHandle handle);
+    
+    /// <summary>
+    /// Called by the core to let the frontend know that there is pixeldata to display by an output
     /// </summary>
     ///  /// <param name="target">handle of the target output to send the data to</param>
-    /// <param name="pixelData">The pixel data to display</param>
-    void OnFrameReadyToDisplay(SoftwareRenderingOutputHandle target, PixelData pixelData);
+    /// <param name="pixelData">The pixel data to display,</param>
+    void OnFrameReadyToDisplayOnOutput(SoftwareRenderingOutputHandle target, PixelData pixelData);
+    
+   
 }
