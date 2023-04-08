@@ -1,13 +1,24 @@
 ﻿namespace VaultCore.Rendering;
 
 /// <summary>
-/// Handle representing an output the software renderer feature can output to
+/// Unique Handle representing an output the software renderer feature can output to
 /// </summary>
 public readonly struct SoftwareRenderingOutputHandle : IEquatable<SoftwareRenderingOutputHandle>
 {
+    private static uint UniqueIdCount = 1;
     private readonly uint OutputID;
     
-    public SoftwareRenderingOutputHandle(uint outputId)
+    /// <summary>
+    /// Handle representing an Invalid Handle
+    /// </summary>
+    public static SoftwareRenderingOutputHandle InvalidHandle => new SoftwareRenderingOutputHandle(0);
+    
+    /// <summary>
+    /// Call to create a new unique handle
+    /// </summary>
+    public static SoftwareRenderingOutputHandle Create() => new SoftwareRenderingOutputHandle(UniqueIdCount++);
+    
+    private SoftwareRenderingOutputHandle(uint outputId)
     {
         OutputID = outputId;
     }
