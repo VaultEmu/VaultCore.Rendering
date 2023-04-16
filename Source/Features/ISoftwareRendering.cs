@@ -12,26 +12,26 @@ public interface ISoftwareRendering : IVaultCoreFeature
     /// </summary>
     /// <returns>Handle for the new output</returns>
     /// /// <param name="outputName">Name of this output</param>
-    SoftwareRenderingOutputHandle CreateOutput(string outputName);
+    RenderOutputHandle CreateOutput(string outputName);
     
     /// <summary>
     /// Called by the core to destroy an output for the software rendered data on the frontend
     /// </summary>
     /// <param name="handle">handle of output to destroy</param>
-    void DestroyOutput(SoftwareRenderingOutputHandle handle);
+    void DestroyOutput(RenderOutputHandle handle);
     
     /// <summary>
     /// Resets an output to its intial state before any data was sent to it
     /// </summary>
     /// <param name="handle">handle of output to destroy</param>
-    void ResetOutput(SoftwareRenderingOutputHandle handle);
+    void ResetOutput(RenderOutputHandle handle);
     
     /// <summary>
     /// Called by the core to let the frontend know that there is pixeldata to display by an output
     /// </summary>
     ///  /// <param name="target">handle of the target output to send the data to</param>
     /// <param name="pixelData">The pixel data to display,</param>
-    void OnFrameReadyToDisplayOnOutput(SoftwareRenderingOutputHandle target, PixelData pixelData);
+    void OnFrameReadyToDisplayOnOutput(RenderOutputHandle target, PixelData pixelData);
     
    
 }
