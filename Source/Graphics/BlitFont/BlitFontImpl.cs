@@ -96,6 +96,7 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
                 {
                     /* new line and redo on-screen checks */
                     currentChar = '\n'; 
+                    endX = startX;
                     --index; 
 					
                 } 
