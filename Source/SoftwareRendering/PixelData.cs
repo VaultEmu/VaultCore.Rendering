@@ -4,6 +4,25 @@ using System.Runtime.InteropServices;
 namespace VaultCore.Rendering;
 
 /// <summary>
+/// Factor to apply to source/destination colors when using SetPixelBlended
+/// </summary>
+public enum PixelBlendFactor
+{
+    Zero,                       //Multiplied the color by 0
+    One,                        //Multiplies the color by 1 
+    
+    SourceColor,                //Multiplies each color component by the corresponding component in the source color
+    OneMinusSourceColor,        //Multiplies each color component by 1 - the corresponding component in the source color
+    SourceAlpha,                //Multiplies each color component by the source alpha component
+    OneMinusSourceAlpha,        //Multiplies each color component by 1 - the source alpha component
+    
+    DestinationColor,           //Multiplies each color component by the corresponding component in the destination color
+    OneMinusDestinationColor,   //Multiplies each color component by 1 - the corresponding component in the destination color
+    DestinationAlpha,           //Multiplies each color component by the destination alpha component
+    OneMinusDestinationAlpha    //Multiplies each color component by 1 - the destination alpha component
+}
+
+/// <summary>
 /// Class wrapping around an array of color32 that represents the pixel data of some width and height
 /// Data is defined as pixel 0,0 been in the top left corner with X going right and y going down
 /// </summary>
@@ -42,6 +61,7 @@ public class PixelData
     {
         Resize(width, height);
     }
+    
     /// <summary>
     /// Sets a pixel at an x and y position
     /// </summary>
@@ -61,8 +81,8 @@ public class PixelData
         }
 
         var index = x + y * _width;
-
-        _pixelDataArray[index] = pixel;
+        
+        SetPixel(pixel, index);
     }
     
     /// <summary>
@@ -78,6 +98,68 @@ public class PixelData
         }
 
         _pixelDataArray[index] = pixel;
+    }
+
+    /// <summary>
+    /// Sets a pixel at an x and y position using a blending mode.
+    /// Blending is performed as
+    ///     SourceColor * sourceBlendFactor + DestColor * destBlendFactor
+    /// Where SourceColor is the color passed in (pixel)
+    /// and DestColor is the existing color on that pixel
+    /// See PixelBlendFactor enum for what the factors mean
+    /// If doing simple replacing of the pixel color, SetPixel is much faster
+    /// </summary>
+    /// <param name="pixel">Color to set the pixel</param>
+    /// <param name="x">X position of the pixel</param>
+    /// <param name="y">Y position of the pixel</param>
+    /// <param name="sourceBlendFactor">the source factor to use on the pixel parameter before been added to the destination color</param>
+    /// <param name="destBlendFactor">the destination factor to use on the pixel parameter before been added to the destination color</param>
+    public void SetPixelBlended(Color32 pixel, uint x, uint y, PixelBlendFactor sourceBlendFactor, PixelBlendFactor destBlendFactor)
+    {
+        if(x >= _width)
+        {
+            throw new ArgumentException("x should be less then Width");
+        }
+
+        if(y >= _height)
+        {
+            throw new ArgumentException("y should be less then Height");
+        }
+
+        var index = x + y * _width;
+        
+        SetPixelBlended(pixel, index, sourceBlendFactor, destBlendFactor);
+    }
+    
+    /// <summary>
+    /// Sets a pixel at an x and y position using a blending mode.
+    /// Blending is performed as
+    ///     SourceColor * sourceBlendFactor + DestColor * destBlendFactor
+    /// Where SourceColor is the color passed in (pixel)
+    /// and DestColor is the existing color on that pixel
+    /// See PixelBlendFactor enum for what the factors mean
+    /// If doing simple replacing of the pixel color, SetPixel is much faster
+    /// </summary>
+    /// <param name="pixel">Color to set the pixel</param>
+    /// <param name="index">Index of the pixel</param>
+    /// <param name="sourceBlendFactor">the source factor to use on the pixel parameter before been added to the destination color</param>
+    /// <param name="destBlendFactor">the destination factor to use on the pixel parameter before been added to the destination color</param>
+    
+    public void SetPixelBlended(Color32 pixel, uint index, PixelBlendFactor sourceBlendFactor, PixelBlendFactor destBlendFactor)
+    {
+        if(index >= NumPixels)
+        {
+            throw new ArgumentException("index should be less then NumPixels");
+        }
+        
+        var source = PerformBlending(pixel, pixel, _pixelDataArray[index], sourceBlendFactor);
+        var dest = PerformBlending( _pixelDataArray[index], pixel, _pixelDataArray[index], destBlendFactor);
+
+        _pixelDataArray[index] = new Color32(
+                source.R + dest.R,
+                source.G + dest.G,
+                source.B + dest.B,
+                source.A + dest.A);
     }
 
     /// <summary>
@@ -305,6 +387,77 @@ public class PixelData
                     } 
                 }
             }
+        }
+    }
+    
+    private Color32 PerformBlending(Color32 factorTargetColor, Color32 sourceColor, Color32 destColor, PixelBlendFactor blendFactor)
+    {
+        switch(blendFactor)
+        {
+            case PixelBlendFactor.Zero:
+                return Color32.Clear;
+            
+            case PixelBlendFactor.One:
+                return factorTargetColor;
+            
+            case PixelBlendFactor.SourceColor:
+                return new Color32(
+                    factorTargetColor.R * sourceColor.R,
+                    factorTargetColor.G * sourceColor.G,
+                    factorTargetColor.B * sourceColor.B,
+                    factorTargetColor.A * sourceColor.A);
+            
+            case PixelBlendFactor.OneMinusSourceColor:
+                return new Color32(
+                    factorTargetColor.R * (255 - sourceColor.R),
+                    factorTargetColor.G * (255 - sourceColor.G),
+                    factorTargetColor.B * (255 - sourceColor.B),
+                    factorTargetColor.A * (255 - sourceColor.A));
+            
+            case PixelBlendFactor.SourceAlpha:
+                return new Color32(
+                    factorTargetColor.R * sourceColor.A,
+                    factorTargetColor.G * sourceColor.A,
+                    factorTargetColor.B * sourceColor.A,
+                    factorTargetColor.A * sourceColor.A);
+            
+            case PixelBlendFactor.OneMinusSourceAlpha:
+                return new Color32(
+                    factorTargetColor.R * (255 - sourceColor.A),
+                    factorTargetColor.G * (255 - sourceColor.A),
+                    factorTargetColor.B * (255 - sourceColor.A),
+                    factorTargetColor.A * (255 - sourceColor.A));
+            
+            case PixelBlendFactor.DestinationColor:
+                return new Color32(
+                    factorTargetColor.R * destColor.R,
+                    factorTargetColor.G * destColor.G,
+                    factorTargetColor.B * destColor.B,
+                    factorTargetColor.A * destColor.A);
+            
+            case PixelBlendFactor.OneMinusDestinationColor:
+                return new Color32(
+                    factorTargetColor.R * (255 - destColor.R),
+                    factorTargetColor.G * (255 - destColor.G),
+                    factorTargetColor.B * (255 - destColor.B),
+                    factorTargetColor.A * (255 - destColor.A));
+            
+            case PixelBlendFactor.DestinationAlpha:
+                return new Color32(
+                    factorTargetColor.R * destColor.A,
+                    factorTargetColor.G * destColor.A,
+                    factorTargetColor.B * destColor.A,
+                    factorTargetColor.A * destColor.A);
+            
+            case PixelBlendFactor.OneMinusDestinationAlpha:
+                return new Color32(
+                    factorTargetColor.R * (255 - destColor.A),
+                    factorTargetColor.G * (255 - destColor.A),
+                    factorTargetColor.B * (255 - destColor.A),
+                    factorTargetColor.A * (255 - destColor.A));
+            
+            default:
+                throw new ArgumentOutOfRangeException(nameof(blendFactor), blendFactor, null);
         }
     }
 }
