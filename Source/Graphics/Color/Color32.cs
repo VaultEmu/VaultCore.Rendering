@@ -103,35 +103,4 @@ public struct Color32
         B = b;
         A = a;
     }
-    
-    /// <summary>
-    /// Creates a Color32 from rgba float values
-    /// Input components will be clamped between 0-1
-    /// </summary>
-    /// <param name="r">r component (between 0 - 1)</param>
-    /// <param name="g">g component (between 0 - 1)</param>
-    /// <param name="b">b component (between 0 - 1)</param>
-    public Color32(float r, float g, float b)
-    {
-        R = (byte)(Math.Round(Math.Clamp(r, 0.0f, 1.0f) * 255.0f));
-        G = (byte)(Math.Round(Math.Clamp(g, 0.0f, 1.0f) * 255.0f));
-        B = (byte)(Math.Round(Math.Clamp(b, 0.0f, 1.0f) * 255.0f));
-        A = 255;
-    }
-    
-    /// <summary>
-    /// Creates a Color32 from rgba float values
-    /// Input components will be clamped between 0-1
-    /// </summary>
-    /// <param name="r">r component (between 0 - 1)</param>
-    /// <param name="g">g component (between 0 - 1)</param>
-    /// <param name="b">b component (between 0 - 1)</param>
-    /// <param name="a">a component (between 0 - 1)</param>
-    public Color32(float r, float g, float b, float a)
-    {
-        R = (byte)(Math.Round(Math.Clamp(r, 0.0f, 1.0f) * 255.0f));
-        G = (byte)(Math.Round(Math.Clamp(g, 0.0f, 1.0f) * 255.0f));
-        B = (byte)(Math.Round(Math.Clamp(b, 0.0f, 1.0f) * 255.0f));
-        A = (byte)(Math.Round(Math.Clamp(a, 0.0f, 1.0f) * 255.0f));
-    }
 }
