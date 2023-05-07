@@ -129,7 +129,7 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
 						
                         for(var glY = 0; glY < _glyphData.GlyphHeight; ++glY)
                         {
-                            for(var pxY = FontScale; pxY >= 0; pxY--)
+                            for(var pxY = FontScale; pxY > 0; pxY--)
                             {
                                 var pixelIndex = RowStartIndex;
                                 RowStartIndex += buffer.Width;
@@ -141,7 +141,7 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
 									
                                     if(drawPixel)
                                     {
-                                        for(var pxX = FontScale; pxX >= 0; pxX--)
+                                        for(var pxX = FontScale; pxX > 0; pxX--)
                                         {
                                             buffer.SetPixel(color, pixelIndex);
                                             pixelIndex++;
