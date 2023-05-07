@@ -5,9 +5,9 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
 {
     private TGlyphData _glyphData = new TGlyphData();
     
-    private int GlyphAdvance => (_glyphData.GlyphWidth + 1) * FontScale;
     private int GlyphDescender => _glyphData.GlyphDescender * FontScale;
-    private int RowAdvance => (_glyphData.GlyphHeight + _glyphData.GlyphDescender + 1) * FontScale;
+    
+
     
     /// <summary>
     /// Width of each Glyph in the font
@@ -25,7 +25,17 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
     public int FontScale {get; set; } = 1;
     
     /// <summary>
-    /// How to handle the text falling off the end of the buffer
+    /// How many pixels are advanced when moving from the current character to the next
+    /// </summary>
+    public int GlyphAdvance => (_glyphData.GlyphWidth + 1) * FontScale;
+    
+    /// <summary>
+    /// How many pixels are advanced when moving from the current line to the next
+    /// </summary>
+    public int RowAdvance => (_glyphData.GlyphHeight + _glyphData.GlyphDescender + 1) * FontScale;
+    
+    /// <summary>
+    /// How to handle the text falling off the end of the buffer width
     /// </summary>
     public WrapModes WrapMode {get; set; } = WrapModes.Clip;
     
