@@ -402,59 +402,59 @@ public class PixelData
             
             case PixelBlendFactor.SourceColor:
                 return new Color32(
-                    factorTargetColor.R * sourceColor.R,
-                    factorTargetColor.G * sourceColor.G,
-                    factorTargetColor.B * sourceColor.B,
-                    factorTargetColor.A * sourceColor.A);
+                    factorTargetColor.R * (sourceColor.R / 255.0f),
+                    factorTargetColor.G * (sourceColor.G / 255.0f),
+                    factorTargetColor.B * (sourceColor.B / 255.0f),
+                    factorTargetColor.A * (sourceColor.A / 255.0f));
             
             case PixelBlendFactor.OneMinusSourceColor:
                 return new Color32(
-                    factorTargetColor.R * (255 - sourceColor.R),
-                    factorTargetColor.G * (255 - sourceColor.G),
-                    factorTargetColor.B * (255 - sourceColor.B),
-                    factorTargetColor.A * (255 - sourceColor.A));
+                    factorTargetColor.R * ((255 - sourceColor.R) / 255.0f),
+                    factorTargetColor.G * ((255 - sourceColor.G) / 255.0f),
+                    factorTargetColor.B * ((255 - sourceColor.B) / 255.0f),
+                    factorTargetColor.A * ((255 - sourceColor.A) / 255.0f));
             
             case PixelBlendFactor.SourceAlpha:
                 return new Color32(
-                    factorTargetColor.R * sourceColor.A,
-                    factorTargetColor.G * sourceColor.A,
-                    factorTargetColor.B * sourceColor.A,
-                    factorTargetColor.A * sourceColor.A);
+                    factorTargetColor.R * (sourceColor.A / 255.0f),
+                    factorTargetColor.G * (sourceColor.A / 255.0f),
+                    factorTargetColor.B * (sourceColor.A / 255.0f),
+                    factorTargetColor.A * (sourceColor.A / 255.0f));
             
             case PixelBlendFactor.OneMinusSourceAlpha:
                 return new Color32(
-                    factorTargetColor.R * (255 - sourceColor.A),
-                    factorTargetColor.G * (255 - sourceColor.A),
-                    factorTargetColor.B * (255 - sourceColor.A),
-                    factorTargetColor.A * (255 - sourceColor.A));
+                    factorTargetColor.R * ((255 - sourceColor.A) / 255.0f),
+                    factorTargetColor.G * ((255 - sourceColor.A) / 255.0f),
+                    factorTargetColor.B * ((255 - sourceColor.A) / 255.0f),
+                    factorTargetColor.A * ((255 - sourceColor.A) / 255.0f));
             
             case PixelBlendFactor.DestinationColor:
                 return new Color32(
-                    factorTargetColor.R * destColor.R,
-                    factorTargetColor.G * destColor.G,
-                    factorTargetColor.B * destColor.B,
-                    factorTargetColor.A * destColor.A);
+                    factorTargetColor.R * (destColor.R / 255.0f),
+                    factorTargetColor.G * (destColor.G / 255.0f),
+                    factorTargetColor.B * (destColor.B / 255.0f),
+                    factorTargetColor.A * (destColor.A / 255.0f));
             
             case PixelBlendFactor.OneMinusDestinationColor:
                 return new Color32(
-                    factorTargetColor.R * (255 - destColor.R),
-                    factorTargetColor.G * (255 - destColor.G),
-                    factorTargetColor.B * (255 - destColor.B),
-                    factorTargetColor.A * (255 - destColor.A));
+                    factorTargetColor.R * ((255 - destColor.R) / 255.0f),
+                    factorTargetColor.G * ((255 - destColor.G) / 255.0f),
+                    factorTargetColor.B * ((255 - destColor.B) / 255.0f),
+                    factorTargetColor.A * ((255 - destColor.A) / 255.0f));
             
             case PixelBlendFactor.DestinationAlpha:
                 return new Color32(
-                    factorTargetColor.R * destColor.A,
-                    factorTargetColor.G * destColor.A,
-                    factorTargetColor.B * destColor.A,
-                    factorTargetColor.A * destColor.A);
+                    factorTargetColor.R * (destColor.A / 255.0f),
+                    factorTargetColor.G * (destColor.A / 255.0f),
+                    factorTargetColor.B * (destColor.A / 255.0f),
+                    factorTargetColor.A * (destColor.A / 255.0f));
             
             case PixelBlendFactor.OneMinusDestinationAlpha:
                 return new Color32(
-                    factorTargetColor.R * (255 - destColor.A),
-                    factorTargetColor.G * (255 - destColor.A),
-                    factorTargetColor.B * (255 - destColor.A),
-                    factorTargetColor.A * (255 - destColor.A));
+                    factorTargetColor.R * ((255 - destColor.A) / 255.0f),
+                    factorTargetColor.G * ((255 - destColor.A) / 255.0f),
+                    factorTargetColor.B * ((255 - destColor.A) / 255.0f),
+                    factorTargetColor.A * ((255 - destColor.A) / 255.0f));
             
             default:
                 throw new ArgumentOutOfRangeException(nameof(blendFactor), blendFactor, null);
