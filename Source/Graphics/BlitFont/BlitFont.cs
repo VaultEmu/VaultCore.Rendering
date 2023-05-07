@@ -17,4 +17,4 @@ public class BlitFontSmall : Internal.BlitFont<Internal.BlitFontSmallGlyphData> 
 /// <summary>
 /// Simple bitmap font where each character fits in a 5x6 area
 /// </summary>
-public class BlitFontLarge : Internal.BlitFont<Internal.BlitFontSmallGlyphData> { }
+public class BlitFontLarge : Internal.BlitFont<Internal.BlitFontLargeGlyphData> { }

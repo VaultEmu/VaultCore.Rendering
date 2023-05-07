@@ -5,7 +5,6 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
 {
     private TGlyphData _glyphData = new TGlyphData();
     
-    private int GlyphAdvance => (_glyphData.GlyphWidth - 1) * FontScale;
     private int GlyphDescender => _glyphData.GlyphDescender * FontScale;
     private int RowAdvance => (_glyphData.GlyphHeight + _glyphData.GlyphDescender + 1) * FontScale;
     
@@ -70,15 +69,15 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
             }
             else if(currentChar == '\t')
             {
-                endX = x + 4 * GlyphAdvance;
+                endX = x + 4 * GlyphWidth;
             }
             else if(currentChar == '\b')
             {
-                endX = x - GlyphAdvance;
+                endX = x - GlyphWidth;
             }
             else
             {
-                endX = x + GlyphAdvance;
+                endX = x + GlyphWidth;
             }
 
             var bufXMaxExceed = endX >= buffer.Width;
