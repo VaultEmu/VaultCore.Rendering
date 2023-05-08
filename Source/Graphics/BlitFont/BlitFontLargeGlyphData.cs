@@ -21,7 +21,7 @@ public class BlitFontLargeGlyphData : IBlitFontGlyphData
     
     public int GlyphWidth => 5;
     public int GlyphHeight => 6;
-    public int GlyphDescender => 1;
+    public int GlyphDescender => 2;
     
     public uint[] GlyphData => _glyphData;
     
