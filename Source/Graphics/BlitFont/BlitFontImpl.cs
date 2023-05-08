@@ -60,13 +60,7 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
         for(var index = 0; index < text.Length; ++index)
         {
             var currentChar = text[index];
-			
-            if(currentChar < 32 || currentChar > 126)
-            {
-                //Unprintable character, switch to space
-                currentChar = ' ';
-            }
-			
+
             int endY = y + GlyphHeight + GlyphDescender;
 			
             var BufOverflow  = endY >= buffer.Height || y >= buffer.Height;
@@ -134,6 +128,12 @@ public abstract class BlitFont<TGlyphData> where TGlyphData : IBlitFontGlyphData
                     default:                                                
                     {
                         /* normal character */
+                        if(currentChar < 32 || currentChar > 126)
+                        {
+                            //Unprintable character, switch to space
+                            currentChar = ' ';
+                        }
+                        
                         var Glyph = _glyphData.GlyphData[currentChar - ' '];
                         var OffsetY = y + _glyphData.GetExtraBits(Glyph) * FontScale;
 
