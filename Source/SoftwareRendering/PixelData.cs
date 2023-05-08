@@ -142,24 +142,27 @@ public class PixelData
     /// </summary>
     /// <param name="pixel">Color to set the pixel</param>
     /// <param name="index">Index of the pixel</param>
-    /// <param name="sourceBlendFactor">the source factor to use on the pixel parameter before been added to the destination color</param>
-    /// <param name="destBlendFactor">the destination factor to use on the pixel parameter before been added to the destination color</param>
-    
-    public void SetPixelBlended(Color32 pixel, uint index, PixelBlendFactor sourceBlendFactor, PixelBlendFactor destBlendFactor)
+    /// <param name="sourceColorBlendFactor">the source factor to use on the R/G/B pixel parameter before been added to the destination color</param>
+    /// <param name="destColorBlendFactor">the destination factor to use on the R/G/B pixel parameter before been added to the destination color</param>
+    /// <param name="sourceAlphaBlendFactor">the source factor to use on the A pixel parameter before been added to the destination color</param>
+    /// <param name="destAlphaBlendFactor">the destination factor to use on the A pixel parameter before been added to the destination color</param>
+    public void SetPixelBlended(Color32 pixel, uint index, 
+        PixelBlendFactor sourceColorBlendFactor, PixelBlendFactor destColorBlendFactor,
+        PixelBlendFactor sourceAlphaBlendFactor = PixelBlendFactor.One, PixelBlendFactor destAlphaBlendFactor = PixelBlendFactor.Zero)
     {
         if(index >= NumPixels)
         {
             throw new ArgumentException("index should be less then NumPixels");
         }
         
-        var source = PerformBlending(pixel, pixel, _pixelDataArray[index], sourceBlendFactor);
-        var dest = PerformBlending( _pixelDataArray[index], pixel, _pixelDataArray[index], destBlendFactor);
-
+        var source = PerformBlending(pixel, pixel, _pixelDataArray[index], sourceColorBlendFactor, sourceAlphaBlendFactor);
+        var dest = PerformBlending( _pixelDataArray[index], pixel, _pixelDataArray[index], destColorBlendFactor, destAlphaBlendFactor);
+        
         _pixelDataArray[index] = new Color32(
-                (byte)(source.R + dest.R),
-                (byte)(source.G + dest.G),
-                (byte)(source.B + dest.B),
-                (byte)(source.A + dest.A));
+                (byte)Math.Clamp(source.R + dest.R, 0, 255),
+                (byte)Math.Clamp(source.G + dest.G, 0, 255),
+                (byte)Math.Clamp(source.B + dest.B, 0, 255),
+                (byte)Math.Clamp(source.A + dest.A, 0, 255));
     }
 
     /// <summary>
@@ -390,74 +393,74 @@ public class PixelData
         }
     }
     
-    private Color32 PerformBlending(Color32 factorTargetColor, Color32 sourceColor, Color32 destColor, PixelBlendFactor blendFactor)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    private Color32 PerformBlending(Color32 factorTargetColor, 
+        Color32 sourceColor, Color32 destColor, 
+        PixelBlendFactor colorBlendFactor, PixelBlendFactor alphaBlendFactor)
     {
+       return new Color32(
+           CalculateChannel(factorTargetColor.R, sourceColor.R, destColor.R, sourceColor.A, destColor.A, colorBlendFactor),
+           CalculateChannel(factorTargetColor.G, sourceColor.G, destColor.G, sourceColor.A, destColor.A, colorBlendFactor),
+           CalculateChannel(factorTargetColor.B, sourceColor.B, destColor.B, sourceColor.A, destColor.A, colorBlendFactor),
+           CalculateChannel(factorTargetColor.A, sourceColor.A, destColor.A, sourceColor.A, destColor.A, alphaBlendFactor));
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    private byte CalculateChannel(
+        byte factorTargetChannel, 
+        byte sourceChannel, byte destChannel, 
+        byte sourceAlpha, byte destAlpha, 
+        PixelBlendFactor blendFactor)
+    {
+        float newValue;
+        
         switch(blendFactor)
         {
             case PixelBlendFactor.Zero:
-                return Color32.Clear;
+                newValue = 0.0f;
+                break;
             
             case PixelBlendFactor.One:
-                return factorTargetColor;
+                newValue = factorTargetChannel;
+                break;
             
             case PixelBlendFactor.SourceColor:
-                return new Color32(
-                    (byte)(factorTargetColor.R * (sourceColor.R / 255.0f)),
-                    (byte)(factorTargetColor.G * (sourceColor.G / 255.0f)),
-                    (byte)(factorTargetColor.B * (sourceColor.B / 255.0f)),
-                    (byte)(factorTargetColor.A * (sourceColor.A / 255.0f)));
-            
+                newValue = factorTargetChannel * (sourceChannel / 255.0f);
+                break;
+
             case PixelBlendFactor.OneMinusSourceColor:
-                return new Color32(
-                    (byte)(factorTargetColor.R * ((255 - sourceColor.R) / 255.0f)),
-                    (byte)(factorTargetColor.G * ((255 - sourceColor.G) / 255.0f)),
-                    (byte)(factorTargetColor.B * ((255 - sourceColor.B) / 255.0f)),
-                    (byte)(factorTargetColor.A * ((255 - sourceColor.A) / 255.0f)));
-            
+                newValue = factorTargetChannel * (1.0f - (sourceChannel / 255.0f));
+                break;
+
             case PixelBlendFactor.SourceAlpha:
-                return new Color32(
-                    (byte)(factorTargetColor.R * (sourceColor.A / 255.0f)),
-                    (byte)(factorTargetColor.G * (sourceColor.A / 255.0f)),
-                    (byte)(factorTargetColor.B * (sourceColor.A / 255.0f)),
-                    (byte)(factorTargetColor.A * (sourceColor.A / 255.0f)));
-            
+                newValue = factorTargetChannel * (sourceAlpha / 255.0f);
+                break;
+
             case PixelBlendFactor.OneMinusSourceAlpha:
-                return new Color32(
-                    (byte)(factorTargetColor.R * ((255 - sourceColor.A) / 255.0f)),
-                    (byte)(factorTargetColor.G * ((255 - sourceColor.A) / 255.0f)),
-                    (byte)(factorTargetColor.B * ((255 - sourceColor.A) / 255.0f)),
-                    (byte)(factorTargetColor.A * ((255 - sourceColor.A) / 255.0f)));
-            
+                newValue = factorTargetChannel * (1.0f - (sourceAlpha / 255.0f));
+                break;
+
             case PixelBlendFactor.DestinationColor:
-                return new Color32(
-                    (byte)(factorTargetColor.R * (destColor.R / 255.0f)),
-                    (byte)(factorTargetColor.G * (destColor.G / 255.0f)),
-                    (byte)(factorTargetColor.B * (destColor.B / 255.0f)),
-                    (byte)(factorTargetColor.A * (destColor.A / 255.0f)));
-            
+                newValue = factorTargetChannel * (destChannel / 255.0f);
+                break;
+
             case PixelBlendFactor.OneMinusDestinationColor:
-                return new Color32(
-                    (byte)(factorTargetColor.R * ((255 - destColor.R) / 255.0f)),
-                    (byte)(factorTargetColor.G * ((255 - destColor.G) / 255.0f)),
-                    (byte)(factorTargetColor.B * ((255 - destColor.B) / 255.0f)),
-                    (byte)(factorTargetColor.A * ((255 - destColor.A) / 255.0f)));
-            
+                newValue = factorTargetChannel * (1.0f - (destChannel / 255.0f));
+                break;
+
             case PixelBlendFactor.DestinationAlpha:
-                return new Color32(
-                    (byte)(factorTargetColor.R * (destColor.A / 255.0f)),
-                    (byte)(factorTargetColor.G * (destColor.A / 255.0f)),
-                    (byte)(factorTargetColor.B * (destColor.A / 255.0f)),
-                    (byte)(factorTargetColor.A * (destColor.A / 255.0f)));
+                newValue = factorTargetChannel * (destAlpha / 255.0f);
+                break;
             
             case PixelBlendFactor.OneMinusDestinationAlpha:
-                return new Color32(
-                    (byte)(factorTargetColor.R * ((255 - destColor.A) / 255.0f)),
-                    (byte)(factorTargetColor.G * ((255 - destColor.A) / 255.0f)),
-                    (byte)(factorTargetColor.B * ((255 - destColor.A) / 255.0f)),
-                    (byte)(factorTargetColor.A * ((255 - destColor.A) / 255.0f)));
+                newValue = factorTargetChannel * (1.0f - (destAlpha / 255.0f));
+                break;
             
             default:
                 throw new ArgumentOutOfRangeException(nameof(blendFactor), blendFactor, null);
         }
+        
+        return (byte)
+            Math.Round(Math.Clamp(newValue, 0.0f, 255.0f));
     }
 }
