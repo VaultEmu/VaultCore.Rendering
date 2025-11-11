@@ -24,8 +24,8 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="VaultCore.CoreAPI" Version="0.1.14" />
-      <PackageReference Include="vaultcore.input" Version="0.1.10" />
+      <PackageReference Include="VaultCore.CoreAPI" Version="0.1.15" />
+      <PackageReference Include="vaultcore.input" Version="0.1.11" />
     </ItemGroup>
 
 </Project>
